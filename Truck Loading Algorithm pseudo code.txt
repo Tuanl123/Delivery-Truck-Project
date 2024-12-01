@@ -1,0 +1,59 @@
+define
+    self.parcels
+    self.truck_weight
+    self.truck_volume
+    self.city_map
+
+function load_parcel():
+    get parcel_id
+    get destination
+    get weight
+    get length
+    get width
+    get height
+
+    volume = length * width * height
+
+    if volume or weight > self.truck_weight and self.truck_volume
+    print error
+    return
+
+    append self.parcels id, destination, distance data from Hanoi, weight, length, width, height
+
+    print added parcel
+
+    function get_invoice():
+        get parcel_id from user
+        get parcel information from self.parcels dictionary
+
+        if parcel not found
+        print error
+        return
+
+        destination = parcel[destination]
+        weight = parcel[weight]
+        distance = distance from Hanoi to destination
+        cost_per_kg = sth
+        total_cost = weight * distance * cost_per_kg
+
+        prints out information, with cost
+
+function loading_plan():
+     if there are no parcels
+       print "no parcels"
+       return
+
+    //sort parcels by descending distance
+    make a sorted_parcels list
+    sort parcels in self.parcels by 'distance' field of each parcel in descending order
+    put the data into sorted_parcels
+    print message
+
+function get_weight():
+    return sum of weight for parcels from dictionary
+
+fucntion get_volume():
+    return volume for parcels from dictionary
+
+
+
