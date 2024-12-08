@@ -46,8 +46,12 @@ function loading_plan():
     //sort parcels by descending distance
     make a sorted_parcels list
     sort parcels in self.parcels by 'distance' field of each parcel in descending order
-    put the data into sorted_parcels
-    print message
+
+    make loading_plan list
+    put the data into loading_plan
+
+    for parcel in loading_plan
+        print message
 
 function get_weight():
     return sum of weight for parcels from dictionary

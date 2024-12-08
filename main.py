@@ -86,21 +86,24 @@ class TruckLoadingSystem:
     def loading_plan(self):
         """
         Generates loading plan based on distance from Hanoi.
-        Last parcel to be delivered is the one loaded first
+        Parcels with closest destination are loaded last.
         """
-        if not self.parcels: # Check if there's parcels to load
+        if not self.parcels:  # Check if there are parcels to load
             print("No parcel data")
             return
 
-        # Sort parcels by descending distance (furthest first)
+        # Sort parcels by descending distance
         sorted_parcels = sorted(self.parcels.items(), key=lambda x: x[1]['distance'], reverse=True)
 
-        # Generate and print loading plan
-        loading_plan = {parcel_id for parcel_id, parcel in sorted_parcels}
+        # Generate loading plan list, contains just the IDs of the sorted parcels
+        loading_plan = []
+        for parcel_id, parcel in sorted_parcels:
+            loading_plan.append(parcel_id)
 
         print("Loading plan:")
-        for parcel_id in loading_plan: # Iterates through sorted parcels
-            print(f"Load parcel {parcel_id} for {self.parcels[parcel_id]['destination']}")
+        for parcel_id in loading_plan:
+            parcel = self.parcels[parcel_id]
+            print(f"Load parcel {parcel_id} for {parcel['destination']} (Distance: {parcel['distance']} km)")
 
 
     def get_weight(self):
@@ -116,7 +119,29 @@ class TruckLoadingSystem:
         """
         return sum(parcel.get('volume', 0) for parcel in self.parcels.values())
 
+def main():
+    system = TruckLoadingSystem()
+
+    while True:
+        print("\n--- Truck Loading and Route Finding System ---")
+        print("1. Load Parcel")
+        print("2. Load Invoice")
+        print("3. Generate Loading Plan")
+        print("4. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            system.load_parcel()
+        elif choice == "2":
+            system.get_invoice()
+        elif choice == "3":
+            system.loading_plan()
+        elif choice == "4":
+            print("Exiting, See ya")
+            break
+        else: print("Invalid Input, please enter correct data type")
 
 if __name__ == "__main__":
-    system = TruckLoadingSystem()
+    main()
 
