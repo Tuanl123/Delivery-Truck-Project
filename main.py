@@ -2,6 +2,7 @@ import heapq
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+
 class TruckLoadingSystem:
     def __init__(self):
         """
@@ -10,13 +11,23 @@ class TruckLoadingSystem:
         self.parcels = {} # Parcels dictionary
         self.truck_weight = 100 # truck weight allowance (can be modified)
         self.truck_volume = 69696969 # truck volume allowance (can be modified)
-        self.city_map = { # Dictionary of city map, can be modified to match the real distance for cost calculations
+        # Dictionary of city map, can be modified to match the real distance for cost calculations
+        self.city_map = {
             'Hanoi': {'Hai Phong': 105, 'Da Nang': 763, 'Nha Trang': 1280, 'Dalat': 1370, 'HCMC': 1730},
             'Hai Phong': {'Hanoi': 105},
             'Da Nang': {'Hanoi': 763},
             'Nha Trang': {'Hanoi': 1280},
             'Dalat': {'Hanoi': 1370},
             'HCMC': {'Hanoi': 1730},
+        }
+        # city coordinates, can be implemented into the path finding algorithm in the future
+        # or act as a backup
+        self.city_coordinates = {
+            'Hanoi': (106.0, 21.0),
+            'Hai Phong': (106.7, 20.9),
+            'Da Nang': (108.2, 16.1),
+            'Dalat': (108.4, 11.9),
+            'HCMC': (106.7, 10.8)
         }
 
     def load_parcel(self):
@@ -119,6 +130,120 @@ class TruckLoadingSystem:
         """
         return sum(parcel.get('volume', 0) for parcel in self.parcels.values())
 
+    def generate_route(self):
+        """
+        Generate the optimal delivery route
+        """
+        if not self.parcels:
+            print("No parcels to deliver")
+            return
+
+        # Identify cities
+        delivery_cities = set(parcel["destination"] for parcel in self.parcels.values())
+
+        # If no cities have parcel, return empty
+        if not delivery_cities:
+            return [], 0
+
+        try:
+            optimized_route, total_distance = self.shortest_path('Hanoi', delivery_cities)
+            print("Delivery route:")
+            for city in optimized_route:
+                print(city)
+            print(f"Total route distance: {total_distance} km")
+
+            return optimized_route, total_distance
+
+        except ValueError as e:
+            print(f"Route optimize error: {e}")
+            return [], 0
+
+
+    def shortest_path(self, start, destinations):
+        """
+        Find the shortest path to travel to all destinations using Dijkstra's algorithm
+        :param start: starting city
+        :param destinations: set of cities that must be visited
+        :return: Optimized route and total distance
+        """
+        # If there are no destinations, return empty route list
+
+        if not destinations:
+            return [], 0
+
+        remaining_destinations = destinations.copy()
+        current_route = [start]
+        total_distance = 0
+        current_city = start
+
+        while remaining_destinations:
+        # Find the nearest unvisited destination
+            shortest_distance = float('inf')
+            next_city = None
+
+            for dest in remaining_destinations:
+                # Find the shortest path form curent city to destination
+                distance = self.shortest_distance(current_city, dest)  # calculates distance
+                if distance < shortest_distance:
+                    shortest_distance = distance
+                    next_city = dest
+
+        # If no path is found, raise error
+            if next_city is None:
+                raise ValueError(f"No path exists to {remaining_destinations}")
+
+        # Update the route and distance
+            current_route.append(next_city)
+            total_distance += shortest_distance
+            current_city = next_city
+            remaining_destinations.remove(next_city)
+
+        # return to Hanoi
+        final_distance = self.shortest_distance(current_city, start)
+        current_route.append(start)
+        total_distance += final_distance
+
+        return current_route, total_distance
+
+    def shortest_distance(self, start, end):
+        """
+        Find the shortest distance between the two cities using Dijkstra's algorithm
+        :param start: Starting city
+        :param end: Destination city
+        :return: Shortest distance between cities
+        """
+        # define distances and previous nodes
+        distances = {city: float("inf") for city in self.city_map} # initialize dictionary with all cities distance set to infinite
+        distances[start] = 0
+        pq = [(0, start)] # priority queue setup
+        visited = set() # keep track of already visited cities
+
+        while pq:
+            current_distance, current_city = heapq.heappop(pq) # return smallest distance first
+
+            # If reached the end city, return distance
+            if current_city == end:
+                return current_distance
+
+            # If already visited, skip
+            if current_city in visited:
+                continue
+
+            visited.add(current_city)
+
+            # check for neighbors
+            for neighbor, weight in self.city_map.get(current_city, {}).items():
+                distance = current_distance + weight
+
+                # update distance if shorter path is found
+                if distance < distances[neighbor]:
+                    distances[neighbor] = distance
+                    heapq.heappush(pq, (distance, neighbor))
+
+        # if there are no paths
+        raise ValueError(f"No paths exists between {start} and {end}")
+
+
 def main():
     system = TruckLoadingSystem()
 
@@ -127,7 +252,8 @@ def main():
         print("1. Load Parcel")
         print("2. Load Invoice")
         print("3. Generate Loading Plan")
-        print("4. Exit")
+        print("4. Generate Route")
+        print("5. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -138,10 +264,13 @@ def main():
         elif choice == "3":
             system.loading_plan()
         elif choice == "4":
+            system.generate_route()
+        elif choice == "5":
             print("Exiting, See ya")
             break
-        else: print("Invalid Input, please enter correct data type")
+        else:
+            print("Invalid Input, please enter correct data type")
+
 
 if __name__ == "__main__":
     main()
-

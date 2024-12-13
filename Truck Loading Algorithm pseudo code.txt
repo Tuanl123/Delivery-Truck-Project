@@ -5,12 +5,7 @@ define
     self.city_map
 
 function load_parcel():
-    get parcel_id
-    get destination
-    get weight
-    get length
-    get width
-    get height
+    get parcel id, destination, weight, length, width, height
 
     volume = length * width * height
 

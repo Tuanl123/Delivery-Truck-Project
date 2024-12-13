@@ -1,0 +1,63 @@
+function dijkstra(start, destinations):
+    start
+    create route = [start]
+    set total_distance = 0
+    create remaining_destinations = copy of destinations
+
+    while remaining destinations not empty
+        //find nearest unvisited destination
+        set shortest_distance = infinity
+        set next_city = null
+
+        for each destination in remaining_destinations:
+        // Calculate distnace to destination
+        distance = shortest_distance(current_city, destination)
+
+        if distance < shortest_distance:
+            set shortest_distance = distance
+            set next_city = destination
+
+        // routing error handle
+        if next_city is null, print error, return empty route
+
+        // update route details
+        append next_city to route
+        add shortest_distance to total_distance
+        set current_city = next_city
+        remove next_city from remaining_destinations
+
+    // return to starting point
+    final_distnace = shortest_distance(current_city, start)
+    append start to route
+    add final_distance to total_distance
+
+    return route, total_distance
+
+function shortest_distance(start, end):
+    // create distance tracking
+    set all cities to infinity
+    set distances[start] = 0
+    define priority_queue with (0, start)
+    set visited = empty set
+
+    while priority_queue not empty
+        get currenty city with shortest known distance
+
+        if current_city == end:
+            return current_distance
+
+        if current_city in visited, continue
+
+        add current_city to visited
+
+        // explore neighboring cities
+        for each neighbor, weight in current_city's connections:
+        distance = current_distance + weight
+
+        // Update if shorter path is found
+        if distance , distances[neighbor]:
+            set distnaces[neighbor] = distance
+            add (distance, neighbor) to priority_queue
+
+        // in case no path exists
+        print error "no path", return infinity
